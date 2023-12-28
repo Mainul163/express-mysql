@@ -2,14 +2,15 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const connection = require("./config/db");
+const cors = require("cors");
 const app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cors());
 // parse application/json
 app.use(bodyParser.json());
 const PORT = 5000;
 app.get("/", (req, res) => {
-  connection.query("SELECT * FROM posts", (err, rows) => {
+  connection.query("SELECT * FROM users", (err, rows) => {
     if (err) {
       console.log(err);
     } else {
@@ -33,9 +34,10 @@ app.get("/employees/:id", (req, res) => {
 });
 
 app.post("/employees", (req, res) => {
-  const empData = [req.body.title, req.body.body, req.body.created_at];
+  console.log(".......", req.body);
+  const empData = [req.body.name, req.body.email, req.body.country];
   connection.query(
-    "INSERT INTO posts(title,body,created_at) values(?)",
+    "INSERT INTO users(name,email,country) values(?)",
     [empData],
     (err, rows) => {
       if (err) {
@@ -64,7 +66,7 @@ app.put("/employees/:id", (req, res) => {
 
 app.delete("/employees/:id", (req, res) => {
   connection.query(
-    "DELETE FROM posts  WHERE id=?",
+    "DELETE FROM users  WHERE id=?",
     [req.params.id],
     (err, rows) => {
       if (err) {
